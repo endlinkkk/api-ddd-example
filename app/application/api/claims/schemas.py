@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 from domain.entities.claims import Claim
 
+
 class CreateClaimResponseSchema(BaseModel):
     oid: str
     title: str
@@ -17,8 +18,3 @@ class CreateClaimRequestSchema(BaseModel):
     username: str
     email: str
     status: str
-
-
-
-
-

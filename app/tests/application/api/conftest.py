@@ -13,6 +13,7 @@ def app() -> FastAPI:
     app.dependency_overrides[init_container] = init_dummy_container
     return app
 
+
 @pytest.fixture
 def client(app: FastAPI) -> TestClient:
     return TestClient(app=app)

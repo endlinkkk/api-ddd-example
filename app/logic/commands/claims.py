@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from domain.entities.claims import Claim, Message, User
 from domain.values.claims import Email, Status, Text, Title, Username
-from infra.repositories.claims import BaseClaimRepository
+from infra.repositories.claims.base import BaseClaimRepository
 from logic.commands.base import BaseCommand, BaseCommandHandler
 
 

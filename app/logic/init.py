@@ -1,15 +1,14 @@
 from functools import lru_cache
-from infra.repositories.claims import BaseClaimRepository, MemoryClaimRepository
+from infra.repositories.claims.base import BaseClaimRepository
+from infra.repositories.claims.mongo import MongoDBClaimRepository
 from logic.commands.claims import CreateClaimCommand, CreateClaimCommandHandler
 from logic.mediator import Mediator
 from punq import Container, Scope
+from motor.motor_asyncio import AsyncIOMotorClient
+from settings.config import Config
 
 
-
-def init_mediator(
-    mediator: Mediator,
-    container: Container
-):
+def init_mediator(mediator: Mediator, container: Container):
     mediator.register_command(
         CreateClaimCommand,
         [
@@ -25,8 +24,9 @@ def init_container():
 
 def _init_container() -> Container:
     container = Container()
-    container.register(BaseClaimRepository, MemoryClaimRepository, scope=Scope.singleton)
+
     container.register(CreateClaimCommandHandler)
+    container.register(Config, instance=Config(), scope=Scope.singleton)
 
     def init_mediator() -> Mediator:
         mediator = Mediator()
@@ -38,6 +38,23 @@ def _init_container() -> Container:
             ],
         )
         return mediator
+
+    def init_claim_mongodb_repository() -> MongoDBClaimRepository:
+        config: Config = container.resolve(Config)
+        client = AsyncIOMotorClient(
+            config.mongodb_connection_uri, serverSelectionTimeoutMS=3000
+        )
+        return MongoDBClaimRepository(
+            mongo_db_client=client,
+            mongo_db_db_name=config.mongodb_chat_database,
+            mongo_db_collection_name=config.mongodb_chat_collection,
+        )
+
+    container.register(
+        BaseClaimRepository,
+        factory=init_claim_mongodb_repository,
+        scope=Scope.singleton,
+    )
     container.register(Mediator, factory=init_mediator)
 
     return container

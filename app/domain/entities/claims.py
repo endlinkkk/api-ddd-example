@@ -42,9 +42,7 @@ class Claim(BaseEntity):
         claim = cls(title=title, message=message, status=status, user=user)
         claim.register_event(
             NewClaimCreatedEvevnt(
-                claim_id=claim.oid,
-                claim_title=claim.title,
-                clain_status=claim.status
+                claim_id=claim.oid, claim_title=claim.title, clain_status=claim.status
             )
         )
         return claim
