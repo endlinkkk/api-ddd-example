@@ -7,6 +7,7 @@ from infra.repositories.claims.converters import (
     convert_claim_document_to_entity,
     convert_claim_entity_to_document,
 )
+from infra.repositories.filters.claims import GetClaimsFilters
 
 
 @dataclass
@@ -27,11 +28,15 @@ class MongoDBClaimRepository(BaseClaimRepository):
             convert_claim_entity_to_document(claim),
         )
 
-    async def get_all_claims(self, limit: int) -> Iterable[Claim]:
-        claims_document = await self._collection.find({}).to_list(length=limit)
-        if not claims_document:
-            return None
-        return [
+    async def get_all_claims(
+        self, filters: GetClaimsFilters
+    ) -> tuple[Iterable[Claim], int]:
+        cursor = self._collection.find({})
+        claims = [
             convert_claim_document_to_entity(claim_document)
-            for claim_document in claims_document
+            async for claim_document in cursor.skip(filters.offset).limit(filters.limit)
         ]
+        count = await self._collection.count_documents(filter={})
+        if not claims:
+            return None
+        return claims, count

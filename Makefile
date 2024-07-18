@@ -9,7 +9,7 @@ APP_CONTAINER = main-app
 
 .PHONY: app
 app:
-	${DC}  ${ENV} up --build -d
+	${DC} ${ENV} up --build -d
 
 .PHONY: storages
 storages:
