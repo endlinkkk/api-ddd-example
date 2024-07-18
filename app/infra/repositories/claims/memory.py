@@ -22,3 +22,8 @@ class MemoryClaimRepository(BaseClaimRepository):
         if not claims:
             return None
         return claims, count
+
+    async def get_claim_by_claim_oid(self, claim_oid: str) -> Claim:
+        for claim in self._saved_claims:
+            if claim.oid == claim_oid:
+                return claim

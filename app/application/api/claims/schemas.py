@@ -22,7 +22,7 @@ class CreateClaimRequestSchema(BaseModel):
     status: str
 
 
-class ClaimSchema(BaseModel):
+class ClaimDetailSchema(BaseModel):
     oid: str
     created_at: datetime
     title: str
@@ -32,8 +32,8 @@ class ClaimSchema(BaseModel):
     email: str
 
     @classmethod
-    def from_entity(cls, claim: Claim) -> "ClaimSchema":
-        return ClaimSchema(
+    def from_entity(cls, claim: Claim) -> "ClaimDetailSchema":
+        return ClaimDetailSchema(
             oid=claim.oid,
             created_at=claim.created_at,
             title=claim.title.as_generic_type(),
@@ -45,4 +45,4 @@ class ClaimSchema(BaseModel):
 
 
 class GetClaimsResponseSchema(BaseQueryResponseSchema):
-    items: list[ClaimSchema]
+    items: list[ClaimDetailSchema]

@@ -5,7 +5,7 @@ from punq import Container
 from application.api.claims.decorators import handle_exceptions
 from application.api.claims.filters import GetClaimsFilters
 from application.api.claims.schemas import (
-    ClaimSchema,
+    ClaimDetailSchema,
     CreateClaimRequestSchema,
     CreateClaimResponseSchema,
     GetClaimsResponseSchema,
@@ -15,7 +15,7 @@ from domain.exceptions.base import ApplicationException
 from logic.commands.claims import CreateClaimCommand
 from logic.init import init_container
 from logic.mediator import Mediator
-from logic.queries.claims import GetClaimsQuery
+from logic.queries.claims import GetClaimQuery, GetClaimsQuery
 
 
 router = APIRouter(tags=["Claim"])
@@ -77,5 +77,28 @@ async def get_claims_handler(
         count=count,
         limit=filters.limit,
         offset=filters.offset,
-        items=[ClaimSchema.from_entity(claim) for claim in claims],
+        items=[ClaimDetailSchema.from_entity(claim) for claim in claims],
     )
+
+
+@router.get(
+    "/{claim_oid}",
+    response_model=ClaimDetailSchema,
+    status_code=status.HTTP_200_OK,
+    description="Get claim by claim_id",
+    responses={
+        status.HTTP_200_OK: {"model": ClaimDetailSchema},
+        status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
+    },
+)
+@handle_exceptions
+async def get_claim_detail_handler(
+    claim_oid: str,
+    container: Container = Depends(init_container),
+) -> ClaimDetailSchema:
+    """Get all claims"""
+    mediator = container.resolve(Mediator)
+
+    claim = await mediator.handle_query(GetClaimQuery(claim_oid=claim_oid))
+
+    return ClaimDetailSchema.from_entity(claim)

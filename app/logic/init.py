@@ -5,7 +5,12 @@ from logic.commands.claims import CreateClaimCommand, CreateClaimCommandHandler
 from logic.mediator import Mediator
 from punq import Container, Scope
 from motor.motor_asyncio import AsyncIOMotorClient
-from logic.queries.claims import GetClaimsQuery, GetClaimsQueryHandler
+from logic.queries.claims import (
+    GetClaimQuery,
+    GetClaimQueryHandler,
+    GetClaimsQuery,
+    GetClaimsQueryHandler,
+)
 from settings.config import Config
 
 
@@ -33,6 +38,12 @@ def _init_container() -> Container:
             GetClaimsQuery,
             container.resolve(GetClaimsQueryHandler),
         )
+
+        mediator.register_query(
+            GetClaimQuery,
+            container.resolve(GetClaimQueryHandler),
+        )
+
         return mediator
 
     def init_claim_mongodb_repository() -> MongoDBClaimRepository:
@@ -52,6 +63,7 @@ def _init_container() -> Container:
         scope=Scope.singleton,
     )
     container.register(GetClaimsQueryHandler)
+    container.register(GetClaimQueryHandler)
     container.register(Mediator, factory=init_mediator)
 
     return container

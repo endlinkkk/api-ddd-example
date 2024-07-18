@@ -40,3 +40,11 @@ class MongoDBClaimRepository(BaseClaimRepository):
         if not claims:
             return None
         return claims, count
+
+    async def get_claim_by_claim_oid(self, claim_oid: str) -> Claim:
+        find = {"oid": claim_oid}
+        claim_document = await self._collection.find_one(find)
+        if not claim_document:
+            return None
+
+        return convert_claim_document_to_entity(claim_document)

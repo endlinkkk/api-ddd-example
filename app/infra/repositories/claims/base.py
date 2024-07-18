@@ -8,6 +8,7 @@ from infra.repositories.filters.claims import GetClaimsFilters
 
 @dataclass
 class BaseClaimRepository(ABC):
+
     @abstractmethod
     def add_claim(self, claim: Claim) -> None: ...
 
@@ -15,3 +16,6 @@ class BaseClaimRepository(ABC):
     def get_all_claims(
         self, filters: GetClaimsFilters
     ) -> tuple[Iterable[Claim], int]: ...
+
+    @abstractmethod
+    def get_claim_by_claim_oid(claim_oid: str) -> Claim: ...
