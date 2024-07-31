@@ -10,6 +10,6 @@ ER = TypeVar(name="ER", bound=Any)
 
 
 @dataclass
-class BaseEventHandler(ABC, Generic[ET, ER]):
+class EventHandler(ABC, Generic[ET, ER]):
     @abstractmethod
     def handle(self, event: ET) -> ER: ...

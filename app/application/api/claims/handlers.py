@@ -14,7 +14,7 @@ from application.api.schemas import ErrorSchema
 from domain.exceptions.base import ApplicationException
 from logic.commands.claims import CreateClaimCommand
 from logic.init import init_container
-from logic.mediator import Mediator
+from logic.mediator.base import Mediator
 from logic.queries.claims import GetClaimQuery, GetClaimsQuery
 
 

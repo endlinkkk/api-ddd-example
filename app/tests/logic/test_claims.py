@@ -5,7 +5,7 @@ import pytest
 
 from domain.entities.claims import Claim
 from logic.commands.claims import CreateClaimCommand
-from logic.mediator import Mediator
+from logic.mediator.base import Mediator
 
 
 @pytest.mark.asyncio

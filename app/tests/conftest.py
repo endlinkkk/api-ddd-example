@@ -1,7 +1,7 @@
 from pytest import fixture
 from punq import Container
 from infra.repositories.claims.base import BaseClaimRepository
-from logic.mediator import Mediator
+from logic.mediator.base import Mediator
 from tests.fixtures import init_dummy_container
 
 

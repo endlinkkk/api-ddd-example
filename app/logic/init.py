@@ -2,7 +2,7 @@ from functools import lru_cache
 from infra.repositories.claims.base import BaseClaimRepository
 from infra.repositories.claims.mongo import MongoDBClaimRepository
 from logic.commands.claims import CreateClaimCommand, CreateClaimCommandHandler
-from logic.mediator import Mediator
+from logic.mediator.base import Mediator
 from punq import Container, Scope
 from motor.motor_asyncio import AsyncIOMotorClient
 from logic.queries.claims import (
@@ -28,10 +28,16 @@ def _init_container() -> Container:
     def init_mediator() -> Mediator:
         mediator = Mediator()
 
+        # command handlers
+        create_claim_handler = CreateClaimCommandHandler(
+            _mediator=mediator,
+            claim_repository=container.resolve(BaseClaimRepository)
+        )
+
         mediator.register_command(
             CreateClaimCommand,
             [
-                container.resolve(CreateClaimCommandHandler),
+                create_claim_handler,
             ],
         )
         mediator.register_query(
