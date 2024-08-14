@@ -4,7 +4,7 @@ from faker import Faker
 import pytest
 
 from domain.entities.claims import Claim
-from logic.commands.claims import CreateClaimCommand
+from logic.commands.claims import CreateClaimCommand, DeleteClaimCommand
 from logic.mediator.base import Mediator
 
 

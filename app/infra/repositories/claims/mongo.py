@@ -37,8 +37,6 @@ class MongoDBClaimRepository(BaseClaimRepository):
             async for claim_document in cursor.skip(filters.offset).limit(filters.limit)
         ]
         count = await self._collection.count_documents(filter={})
-        if not claims:
-            return None
         return claims, count
 
     async def get_claim_by_claim_oid(self, claim_oid: str) -> Claim:
@@ -48,3 +46,7 @@ class MongoDBClaimRepository(BaseClaimRepository):
             return None
 
         return convert_claim_document_to_entity(claim_document)
+
+    async def delete_claim_by_claim_oid(self, claim_oid) -> None:
+        find = {"oid": claim_oid}
+        await self._collection.delete_one(find)

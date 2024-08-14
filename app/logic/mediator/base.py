@@ -5,9 +5,7 @@ from typing import Iterable
 from domain.events.base import BaseEvent
 from logic.commands.base import CR, CT, BaseCommand, BaseCommandHandler
 from logic.events.base import ER, ET, EventHandler
-from logic.exceptions.mediator import (
-    CommandHandlersNotRegisteredException
-)
+from logic.exceptions.mediator import CommandHandlersNotRegisteredException
 from logic.mediator.command import CommandMediator
 from logic.mediator.event import EventMediator
 from logic.mediator.query import QueryMediator
@@ -26,9 +24,7 @@ class Mediator(EventMediator, QueryMediator, CommandMediator):
         default_factory=lambda: dict(), kw_only=True
     )
 
-    def register_event(
-        self, event: ET, event_handlers: Iterable[EventHandler[ET, ER]]
-    ):
+    def register_event(self, event: ET, event_handlers: Iterable[EventHandler[ET, ER]]):
         self.events_map[event].extend(event_handlers)
 
     def register_command(

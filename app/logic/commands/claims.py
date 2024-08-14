@@ -16,6 +16,11 @@ class CreateClaimCommand(BaseCommand):
 
 
 @dataclass(frozen=True)
+class DeleteClaimCommand(BaseCommand):
+    claim_oid: str
+
+
+@dataclass(frozen=True)
 class CreateClaimCommandHandler(BaseCommandHandler[CreateClaimCommand, Claim]):
     claim_repository: BaseClaimRepository
 
@@ -35,3 +40,11 @@ class CreateClaimCommandHandler(BaseCommandHandler[CreateClaimCommand, Claim]):
         await self.claim_repository.add_claim(claim)
 
         return claim
+
+
+@dataclass(frozen=True)
+class DeleteClaimCommandHandler(BaseCommandHandler[DeleteClaimCommand, None]):
+    claim_repository: BaseClaimRepository
+
+    async def handle(self, command: DeleteClaimCommand) -> None:
+        await self.claim_repository.delete_claim_by_claim_oid(command.claim_oid)

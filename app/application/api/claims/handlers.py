@@ -12,7 +12,7 @@ from application.api.claims.schemas import (
 )
 from application.api.schemas import ErrorSchema
 from domain.exceptions.base import ApplicationException
-from logic.commands.claims import CreateClaimCommand
+from logic.commands.claims import CreateClaimCommand, DeleteClaimCommand
 from logic.init import init_container
 from logic.mediator.base import Mediator
 from logic.queries.claims import GetClaimQuery, GetClaimsQuery
@@ -36,7 +36,7 @@ async def create_claim_handler(
     schema: CreateClaimRequestSchema, container: Container = Depends(init_container)
 ) -> CreateClaimResponseSchema:
     """Create new claim"""
-    mediator = container.resolve(Mediator)
+    mediator: Mediator = container.resolve(Mediator)
 
     claim, *_ = await mediator.handle_command(
         CreateClaimCommand(
@@ -67,7 +67,7 @@ async def get_claims_handler(
     container: Container = Depends(init_container),
 ) -> GetClaimsResponseSchema:
     """Get all claims"""
-    mediator = container.resolve(Mediator)
+    mediator: Mediator = container.resolve(Mediator)
 
     claims, count = await mediator.handle_query(
         GetClaimsQuery(filters=filters.to_infra())
@@ -97,8 +97,28 @@ async def get_claim_detail_handler(
     container: Container = Depends(init_container),
 ) -> ClaimDetailSchema:
     """Get all claims"""
-    mediator = container.resolve(Mediator)
+    mediator: Mediator = container.resolve(Mediator)
 
     claim = await mediator.handle_query(GetClaimQuery(claim_oid=claim_oid))
 
     return ClaimDetailSchema.from_entity(claim)
+
+
+@router.delete(
+    "/{claim_oid}",
+    status_code=status.HTTP_200_OK,
+    description="Delete claim by claim_id",
+    responses={
+        status.HTTP_200_OK: {"description": "Claim deleted successfully"},
+        status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
+    },
+)
+@handle_exceptions
+async def delete_claim_handler(
+    claim_oid: str,
+    container: Container = Depends(init_container),
+) -> None:
+    """Get all claims"""
+    mediator: Mediator = container.resolve(Mediator)
+
+    await mediator.handle_command(DeleteClaimCommand(claim_oid=claim_oid))

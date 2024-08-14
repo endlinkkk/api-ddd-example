@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 from domain.entities.base import BaseEntity
-from domain.events.claims import NewClaimCreatedEvevnt
+from domain.events.claims import ClaimDeletedEvent, NewClaimCreatedEvent
 from domain.values.claims import Email, Status, Text, Title, Username
 
 
@@ -41,8 +41,11 @@ class Claim(BaseEntity):
     ) -> "Claim":
         claim = cls(title=title, message=message, status=status, user=user)
         claim.register_event(
-            NewClaimCreatedEvevnt(
+            NewClaimCreatedEvent(
                 claim_id=claim.oid, claim_title=claim.title, clain_status=claim.status
             )
         )
         return claim
+
+    def delete(self):
+        self.register_event(ClaimDeletedEvent(claim_id=self.oid))

@@ -11,12 +11,8 @@ class QueryMediator(ABC):
         default_factory=lambda: dict(), kw_only=True
     )
 
+    @abstractmethod
+    def register_query(self, query: QT, query_handler: BaseQueryHandler[QT, QR]): ...
 
     @abstractmethod
-    def register_query(self, query: QT, query_handler: BaseQueryHandler[QT, QR]):
-        ...
-
-
-    @abstractmethod
-    async def handle_query(self, query: BaseQuery) -> QR:
-        ...
+    async def handle_query(self, query: BaseQuery) -> QR: ...

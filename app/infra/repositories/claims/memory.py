@@ -27,3 +27,9 @@ class MemoryClaimRepository(BaseClaimRepository):
         for claim in self._saved_claims:
             if claim.oid == claim_oid:
                 return claim
+
+    async def delete_claim_by_claim_oid(self, claim_oid) -> None:
+        for claim in self._saved_claims:
+            if claim.oid == claim_oid:
+                self._saved_claims.remove(claim)
+                break
